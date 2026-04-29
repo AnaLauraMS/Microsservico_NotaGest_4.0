@@ -21,7 +21,9 @@ const loginUser = async (req, res) => {
 
   try {
     // Busca usuário no back-end principal
-    const response = await axios.get(`${BACKEND_URL}/byEmail/${email}`);
+    const targetUrl = `${BACKEND_URL}/byEmail/${email}`;
+    console.log(`Chamando backend em: ${targetUrl}`);
+    const response = await axios.get(targetUrl);
     const user = response.data;
 
     if (!user) return res.status(400).json({ error: 'Credenciais inválidas.' });
@@ -40,8 +42,11 @@ const loginUser = async (req, res) => {
     });
 
   } catch (err) {
-    console.error('Erro no login:', err.message);
-    res.status(500).json({ error: 'Erro no servidor.' });
+    console.error('Erro no login:', err.response?.data || err.message);
+    res.status(err.response?.status || 500).json({ 
+      error: err.response?.data?.message || 'Erro no servidor.',
+      details: err.message 
+    });
   }
 };
 

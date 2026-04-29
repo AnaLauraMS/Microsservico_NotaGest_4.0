@@ -1,12 +1,11 @@
+const dotenv = require('dotenv');
+dotenv.config();
+
 const express = require('express');
 const cors = require('cors');
-const dotenv = require('dotenv');
 const connectDB = require('./config/mongoDb'); 
 const authRoutes = require('./routes/authRoutes'); 
 const setupSwagger = require('./config/swaggerConfig'); 
-
-// Carrega variáveis de ambiente
-dotenv.config();
 
 // Conecta ao MongoDB
 connectDB(); 
@@ -20,6 +19,7 @@ app.use(cors({
     const allowed = [
       'http://localhost:3000',
       'http://localhost:3001',
+      'http://localhost:4000',
       'https://nota-gest.vercel.app',
       'https://micronotagest.onrender.com',
       'http://localhost:5001'

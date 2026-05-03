@@ -19,3 +19,5 @@ docker build -t micronotagest .
 ```bash
 docker run -d -p 5001:5001 micronotagest
 ````
+
+##só uma observação, docker run -d -p 5001:5001 --env-file .env micronotagest

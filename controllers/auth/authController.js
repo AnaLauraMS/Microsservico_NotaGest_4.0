@@ -22,7 +22,6 @@ const loginUser = async (req, res) => {
   try {
     // Busca usuário no back-end principal
     const targetUrl = `${BACKEND_URL}/byEmail/${email}`;
-    console.log(`Chamando backend em: ${targetUrl}`);
     const response = await axios.get(targetUrl);
     const user = response.data;
 
@@ -43,9 +42,9 @@ const loginUser = async (req, res) => {
 
   } catch (err) {
     console.error('Erro no login:', err.response?.data || err.message);
-    res.status(err.response?.status || 500).json({ 
+    res.status(err.response?.status || 500).json({
       error: err.response?.data?.message || 'Erro no servidor.',
-      details: err.message 
+      details: err.message
     });
   }
 };

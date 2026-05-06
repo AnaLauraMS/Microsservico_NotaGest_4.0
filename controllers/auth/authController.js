@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const axios = require('axios');
+const logger = require('../../utils/logger');
 require('dotenv').config();
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -35,6 +36,8 @@ const loginUser = async (req, res) => {
     // Gera token
     const token = generateToken(user.email, user._id, user.nome);
 
+    logger.info("Login bem-sucedido", { email: user.email, userId: user._id });
+
     res.status(200).json({
       message: 'Login realizado com sucesso!',
       user: { id: user._id, nome: user.nome, email: user.email },
@@ -43,6 +46,13 @@ const loginUser = async (req, res) => {
 
   } catch (err) {
     console.error('Erro no login:', err.response?.data || err.message);
+    
+    logger.error("Falha no login", { 
+      email, 
+      error: err.message,
+      status: err.response?.status 
+    });
+
     res.status(err.response?.status || 500).json({ 
       error: err.response?.data?.message || 'Erro no servidor.',
       details: err.message 
@@ -88,6 +98,8 @@ const registerUser = async (req, res) => {
     const token = generateToken(user.email, user._id, user.nome);
 
     // --- Retorna sucesso ---
+    logger.info("Novo usuário registrado", { email: user.email, userId: user._id });
+
     res.status(201).json({
       message: 'Usuário registrado com sucesso!',
       user,
@@ -96,6 +108,12 @@ const registerUser = async (req, res) => {
 
   } catch (err) {
     console.error('Erro ao registrar usuário:', err.message);
+    
+    logger.error("Falha no registro de usuário", { 
+      email, 
+      error: err.message 
+    });
+
     res.status(500).json({ error: 'Falha ao registrar usuário.' });
   }
 };

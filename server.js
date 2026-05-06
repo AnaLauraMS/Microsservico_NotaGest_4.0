@@ -7,6 +7,9 @@ const connectDB = require('./config/mongoDb');
 const authRoutes = require('./routes/authRoutes'); 
 const setupSwagger = require('./config/swaggerConfig'); 
 
+const requestLogger = require('./middleware/requestLogger');
+const logger = require('./utils/logger');
+
 // Conecta ao MongoDB
 connectDB(); 
 
@@ -38,6 +41,9 @@ app.use(cors({
 // Configura o Express para parsear JSON
 app.use(express.json());
 
+// Logs (Better Stack)
+app.use(requestLogger);
+
 // Configura o Swagger
 setupSwagger(app); // adiciona a rota /api-docs
 
@@ -46,12 +52,23 @@ app.use('/api/users', authRoutes);
 
 // Middleware para rotas não encontradas
 app.use((req, res, next) => {
+  logger.info("Rota não encontrada", {
+    url: req.originalUrl,
+    method: req.method,
+    ip: req.ip
+  });
   res.status(404).json({ message: 'Rota não encontrada' });
 });
 
 // Middleware global de tratamento de erros
 app.use((err, req, res, next) => {
   console.error(err.stack);
+  logger.error("Erro interno do servidor", {
+    error: err.message,
+    stack: err.stack,
+    url: req.originalUrl,
+    method: req.method
+  });
   res.status(err.status || 500).json({ error: err.message || 'Erro interno do servidor' });
 });
 
